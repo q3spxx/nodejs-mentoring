@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "task1": "nodemon dist/task1/subtask1.js",
-    "task2": "nodemon dist/task1/subtask2.js",
+    "task1": "npx nodemon dist/task1/subtask1.js",
+    "task2": "npx nodemon dist/task1/subtask2.js",
     "build": "npx babel src --out-dir dist --copy-files"
   },
   "repository": {
