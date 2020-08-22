@@ -5,7 +5,7 @@ export class UserRepository {
         this.model = userModel;
     }
 
-    public readOne(id: string): User | undefined {
+    public readOne(id: string): User | void {
         return this.model.readOne(id);
     }
 
