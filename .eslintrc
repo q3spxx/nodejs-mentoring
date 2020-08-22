@@ -29,7 +29,8 @@
             "spread": true,
             "superInFunctions": true,
             "templateStrings": true
-        }
+        },
+        "project": "./tsconfig.json"
     },
     "rules": {
         "prettier/prettier": 2,
