@@ -3,23 +3,18 @@ import { UserRepository } from '@services';
 import { UserModel } from '@models';
 import { autoSuggestUsersValidator, userByIdValidator, postUserValidator } from './user.validators';
 import { AutoSuggestUsersSchema, UserByIdSchema, PostUserSchema } from './user.types';
-import { ValidatedRequest, ValidatedRequestSchema } from 'express-joi-validation';
+import { ValidatedRequest } from 'express-joi-validation';
 
 const userRepository = new UserRepository(new UserModel());
 
 const userController = express.Router();
 
+userController.get('/users', (_, res): void => {
+    res.json(userRepository.getAll());
+});
+
 userController
     .route('/user')
-    .get(({ query }: ValidatedRequest<ValidatedRequestSchema>, res, next): void => {
-        if (!Object.entries(query).length) {
-            res.json(userRepository.getAll());
-
-            return;
-        }
-
-        next();
-    })
     .get(
         autoSuggestUsersValidator,
         ({ query: { loginSubstring, limit } }: ValidatedRequest<AutoSuggestUsersSchema>, res): void => {
