@@ -13,7 +13,7 @@ declare interface UserDTO {
 }
 
 declare interface IUserModel {
-    readOne(id: string): User | undefined;
+    readOne(id: string): User | void;
     getAll(): User[];
     getAutoSuggestUsers(loginSubstring: string, limit: number): User[];
     add(userDTO: UserDTO): User;
