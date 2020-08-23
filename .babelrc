@@ -1,6 +1,7 @@
 {
     "presets": ["@babel/preset-env", "@babel/preset-typescript"],
     "plugins": [
+        "@babel/plugin-transform-runtime",
         [
             "module-resolver",
             {
@@ -8,7 +9,9 @@
                 "alias": {
                     "@services": "./src/services",
                     "@controllers": "./src/controllers",
-                    "@models": "./src/models"
+                    "@models": "./src/models",
+                    "@data-access": "./src/data-access",
+                    "@helpers": "./src/helpers"
                 }
             }
         ]

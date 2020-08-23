@@ -1,96 +1,83 @@
-import { v4 as uuid } from 'uuid';
+import { DataTypes, Model, Op } from 'sequelize';
+import { sequelize } from '../database';
+class User extends Model {
+    public id!: string;
+    public login!: string;
+    public password!: string;
+    public age!: number;
+    public is_deleted!: boolean;
+}
 
-const users: User[] = [
+User.init(
     {
-        id: '1',
-        login: '111',
-        password: '111',
-        age: 23,
-        isDeleted: false
-    },
-    {
-        id: uuid(),
-        login: 'SPetr',
-        password: 'lolKek1987',
-        age: 33,
-        isDeleted: false
-    },
-    {
-        id: uuid(),
-        login: 'Petr',
-        password: 'lolKek1987',
-        age: 33,
-        isDeleted: false
-    },
-    {
-        id: uuid(),
-        login: 'PetrS',
-        password: 'lolKek1987',
-        age: 33,
-        isDeleted: false
-    }
-];
-export class UserModel implements IUserModel {
-    public readOne(userId: string): User | undefined {
-        return users.find(({ id }) => id === userId);
-    }
-
-    public getAll(): User[] {
-        return users;
-    }
-
-    public getAutoSuggestUsers(loginSubstring: string, limit: number): User[] {
-        const sortedUsers = users.sort((userA, userB) => userA.login.localeCompare(userB.login));
-        const userList: User[] = [];
-
-        for (let i = 0; sortedUsers.length > i && userList.length < limit; i++) {
-            const user = sortedUsers[i];
-
-            if (user.login.toLocaleLowerCase().includes(loginSubstring.toLocaleLowerCase())) {
-                userList.push(user);
-            }
+        id: {
+            primaryKey: true,
+            type: DataTypes.TEXT
+        },
+        login: {
+            type: DataTypes.TEXT
+        },
+        password: {
+            type: DataTypes.TEXT
+        },
+        age: {
+            type: DataTypes.INTEGER
+        },
+        is_deleted: {
+            type: DataTypes.BOOLEAN
         }
-
-        return userList;
+    },
+    {
+        sequelize,
+        timestamps: false,
+        schema: 'public',
+        tableName: 'Users'
     }
+);
 
-    public add({ login, password, age }: UserDTO): User {
-        const user: User = {
-            id: uuid(),
-            login,
-            password,
-            age,
-            isDeleted: false
-        };
-
-        users.push(user);
-
+export class UserModel implements IUserModel {
+    public async findOne(id: string): Promise<UserDomain | null> {
+        const user = User.findOne({
+            where: {
+                id
+            }
+        });
         return user;
     }
 
-    public update(userId: string, { login, password, age }: UserDTO): User | void {
-        const userIndex = users.findIndex(({ id }) => id === userId);
-
-        if (userIndex !== -1) {
-            const user = users[userIndex];
-            const updatedUser = { ...user, login, password, age };
-
-            users[userIndex] = updatedUser;
-
-            return updatedUser;
-        }
+    public async findAll(): Promise<UserDomain[]> {
+        const users = await User.findAll();
+        return users;
     }
 
-    public delete(userId: string): User | void {
-        const userIndex = users.findIndex(({ id }) => id === userId);
+    public async findAllByLoginSubstring(loginSubstring: string, limit: number): Promise<UserDomain[]> {
+        const users = await User.findAll({
+            limit,
+            where: {
+                login: {
+                    [Op.like]: `%${loginSubstring}%`
+                }
+            }
+        });
+        return users;
+    }
 
-        if (userIndex !== -1) {
-            const user = users[userIndex];
-            const deletedUser = { ...user, isDeleted: true };
+    public async create(user: UserDomain): Promise<UserDomain> {
+        const newUser = await User.create(user);
+        return newUser;
+    }
 
-            users[userIndex] = deletedUser;
+    public async update({ id, login, password, age, is_deleted }: UserDomain): Promise<UserDomain[]> {
+        const newUser = await User.update(
+            { login, password, age, is_deleted },
+            {
+                returning: true,
+                where: {
+                    id
+                }
+            }
+        );
 
-            return deletedUser;
-        }
+        return newUser[1];
     }
 }

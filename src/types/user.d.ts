@@ -1,22 +1,27 @@
-declare interface User {
-    id: string;
-    login: string;
-    password: string;
-    age: number;
-    isDeleted: boolean;
+declare interface UserDTO {
+    id?: string;
+    login?: string;
+    password?: string;
+    age?: number;
+    isDeleted?: boolean;
 }
 
-declare interface UserDTO {
-    login: string;
-    password: string;
-    age: number;
+declare interface UserDomain {
+    id?: string;
+    login?: string;
+    password?: string;
+    age?: number;
+    is_deleted?: boolean;
+}
+declare interface IUserDataMapper {
+    toDomain(user: UserDTO): UserDomain;
+    toDalEntity(user: UserDomain): UserDTO;
 }
 
 declare interface IUserModel {
-    readOne(id: string): User | void;
-    getAll(): User[];
-    getAutoSuggestUsers(loginSubstring: string, limit: number): User[];
-    add(userDTO: UserDTO): User;
-    update(id: string, userDTO: UserDTO): User | void;
-    delete(id: string): User | void;
+    findOne(id: string): Promise<UserDomain | null>;
+    findAll(): Promise<UserDomain[]>;
+    findAllByLoginSubstring(loginSubstring: string, limit: number): Promise<UserDomain[]>;
+    create(user: UserDomain): Promise<UserDomain>;
+    update(user: UserDomain): Promise<UserDomain[]>;
 }
