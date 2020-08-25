@@ -2,7 +2,7 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "forceConsistentCasingInFileNames": true,
-        "lib": ["es2015"],
+        "lib": ["es2017"],
         "moduleResolution": "node",
         "noImplicitThis": true,
         "noUnusedLocals": true,
@@ -14,7 +14,9 @@
         "paths": {
             "@services": ["src/services"],
             "@controllers": ["src/controllers"],
-            "@models": ["src/models"]
+            "@models": ["src/models"],
+            "@data-access": ["src/data-access"],
+            "@helpers/*": ["src/helpers/*"]
         }
     },
     "include": ["src/**/*.ts"]
