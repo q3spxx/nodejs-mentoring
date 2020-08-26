@@ -1,31 +1,52 @@
+import { v4 as uuid } from 'uuid';
 export class UserRepository {
     private model: IUserModel;
+    private mapper: IUserDataMapper;
 
-    constructor(userModel: IUserModel) {
+    constructor(userModel: IUserModel, userDataMapper: IUserDataMapper) {
         this.model = userModel;
+        this.mapper = userDataMapper;
     }
 
-    public readOne(id: string): User | void {
-        return this.model.readOne(id);
+    public async getUser(id: string): Promise<UserDTO> {
+        const user = await this.model.findOne(id);
+
+        if (user) {
+            return this.mapper.toDalEntity(user);
+        }
+
+        throw new Error('User not found');
     }
 
-    public getAll(): User[] {
-        return this.model.getAll();
+    public async getAllUsers(): Promise<UserDTO[]> {
+        const users = await this.model.findAll();
+        return users.map((user) => this.mapper.toDalEntity(user));
     }
 
-    public getAutoSuggestUsers(loginSubstring: string, limit: number): User[] {
-        return this.model.getAutoSuggestUsers(loginSubstring, limit);
+    public async getAutoSuggestUsers(loginSubstring: string, limit: number): Promise<UserDTO[]> {
+        const users = await this.model.findAllByLoginSubstring(loginSubstring, limit);
+        return users.map((user) => this.mapper.toDalEntity(user));
     }
 
-    public add(userDTO: UserDTO): User {
-        return this.model.add(userDTO);
+    public async createUser(userDTO: UserDTO): Promise<UserDTO> {
+        const user = await this.model.create(
+            this.mapper.toDomain({
+                ...userDTO,
+                id: uuid(),
+                isDeleted: false
+            })
+        );
+
+        return this.mapper.toDalEntity(user);
     }
 
-    public update(id: string, userDTO: UserDTO): User | void {
-        return this.model.update(id, userDTO);
+    public async updateUser(userDTO: UserDTO): Promise<UserDTO[]> {
+        const users = await this.model.update(this.mapper.toDomain(userDTO));
+        return users.map((user) => this.mapper.toDalEntity(user));
     }
 
-    public delete(id: string): User | void {
-        return this.model.delete(id);
+    public async deleteUser(id: string): Promise<UserDTO[]> {
+        const users = await this.model.update(this.mapper.toDomain({ id, isDeleted: true }));
+        return users.map((user) => this.mapper.toDalEntity(user));
     }
 }

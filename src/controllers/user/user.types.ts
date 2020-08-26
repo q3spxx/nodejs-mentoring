@@ -11,8 +11,9 @@ export interface UserByIdSchema extends ValidatedRequestSchema {
     [ContainerTypes.Params]: {
         id: string;
     };
+    [ContainerTypes.Body]: Omit<UserDTO, 'id' | 'isDeleted'>;
 }
 
 export interface PostUserSchema extends ValidatedRequestSchema {
-    [ContainerTypes.Body]: UserDTO;
+    [ContainerTypes.Body]: Omit<UserDTO, 'id' | 'isDeleted'>;
 }

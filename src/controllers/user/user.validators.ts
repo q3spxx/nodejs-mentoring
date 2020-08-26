@@ -3,16 +3,16 @@ import { createValidator } from 'express-joi-validation';
 
 const validator = createValidator();
 
-const autoSuggestSchema = Joi.object({
+const userQuerySchema = Joi.object({
     loginSubstring: Joi.string().required(),
     limit: Joi.number().min(0).required()
 });
 
-const userByIdSchema = Joi.object({
+const userParameterSchema = Joi.object({
     id: Joi.string().required()
 });
 
-const postUserSchema = Joi.object({
+const userBodySchema = Joi.object({
     login: Joi.string().required(),
     password: Joi.string()
         .pattern(/^(?=.*[a-zA-Z])(?=.*[0-9])/)
@@ -20,6 +20,6 @@ const postUserSchema = Joi.object({
     age: Joi.number().min(4).max(130).required()
 });
 
-export const postUserValidator = validator.body(postUserSchema);
-export const userByIdValidator = validator.params(userByIdSchema);
-export const autoSuggestUsersValidator = validator.query(autoSuggestSchema);
+export const userBodyValidator = validator.body(userBodySchema);
+export const userParameterValidator = validator.params(userParameterSchema);
+export const userQueryValidator = validator.query(userQuerySchema);
