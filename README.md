@@ -61,6 +61,8 @@ npm run check-types
 
 ## Api
 
+### Users
+
 ```
 GET /users - Returns all users
 ```
@@ -70,17 +72,51 @@ GET /users?loginSubstring&limit - Returns user by substring and limited by limit
 ```
 
 ```
-GET /user/:id - Returns user by id
+GET /users/:id - Returns user by id
 ```
 
 ```
-POST /user - Creates and returns user
+POST /users - Creates and returns user
 ```
 
 ```
-PUT /user/:id - Updates all users by id
+POST /users:id?groupName - Adds group to user and returns user
 ```
 
 ```
-DELETE /user/:id - Mark all users as deleted by id
+PUT /users/:id - Updates all users by id
+```
+
+```
+DELETE /users/:id - Mark all users as deleted by id
+```
+
+```
+DELETE /users/:id?force=true - Delete all users by id
+```
+
+```
+DELETE /users/:id?groupName - Remove a group from user
+```
+
+### Groups
+
+```
+GET /groups - Returns all groups
+```
+
+```
+GET /groups/:id - Returns group by id
+```
+
+```
+POST /groups - Creates and returns group
+```
+
+```
+PUT /groups/:id - Updates all groups by id
+```
+
+```
+DELETE /groups/:id - Delete all groups by id
 ```

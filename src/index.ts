@@ -1,5 +1,5 @@
 import express from 'express';
-import { userController, commonController } from '@controllers';
+import { userController, commonController, groupsController } from '@controllers';
 
 const port = process.env.PORT || 4000;
 
@@ -9,6 +9,6 @@ app.listen(port);
 
 app.use(express.json());
 
-app.use(userController, commonController);
+app.use(userController, groupsController, commonController);
 
 console.log(`The server is running on port ${port}`);
