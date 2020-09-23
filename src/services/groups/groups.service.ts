@@ -1,7 +1,6 @@
 import { GroupsRepository } from '@repositories';
 import { GroupsModel } from '@models';
 import { GroupDataMapper } from '@data-access';
-import { v4 as uuid } from 'uuid';
 import { NotFoundError } from '@helpers/errors';
 
 class GroupsService {
@@ -26,10 +25,7 @@ class GroupsService {
     }
 
     public async createGroup(groupDTO: GroupDTO): Promise<GroupDTO> {
-        return this.repository.createGroup({
-            ...groupDTO,
-            id: uuid()
-        });
+        return this.repository.createGroup(groupDTO);
     }
 
     public async updateGroup(groupDTO: GroupDTO): Promise<GroupDTO[]> {
