@@ -182,7 +182,7 @@
             }
         ],
         "indent": [
-            2,
+            0,
             4,
             {
                 "SwitchCase": 1

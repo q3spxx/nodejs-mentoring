@@ -5,31 +5,47 @@ import { createGroupsTable } from './groups/groups.table';
 import { Users } from './users/users.model';
 import { Groups } from './groups/groups.model';
 import { UserGroups } from './user-groups/user-groups.model';
+import { logger } from '@helpers/loggers';
 
-(async (): Promise<void> => {
-    const queryInterface = sequelize.getQueryInterface();
+sequelize
+    .authenticate()
+    .then(
+        () => {
+            logger.info('Database connection done');
+        },
+        (error) => {
+            logger.error('Database connection error', error);
+            process.exit(1);
+        }
+    )
+    .then(async () => {
+        const queryInterface = sequelize.getQueryInterface();
 
-    await createGroupsTable(queryInterface);
-    await createUsersTable(queryInterface);
-    await createUserGroupsTable(queryInterface);
+        await createGroupsTable(queryInterface);
+        await createUsersTable(queryInterface);
+        await createUserGroupsTable(queryInterface);
 
-    Users.belongsToMany(Groups, {
-        through: UserGroups,
-        as: 'groups',
-        foreignKey: 'user_id',
-        targetKey: 'id',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
+        Users.belongsToMany(Groups, {
+            through: UserGroups,
+            as: 'groups',
+            foreignKey: 'user_id',
+            targetKey: 'id',
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
+
+        Groups.belongsToMany(Users, {
+            through: UserGroups,
+            as: 'users',
+            foreignKey: 'group_id',
+            targetKey: 'id',
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
+
+        logger.info('Database initialization done');
+    })
+    .catch(() => {
+        logger.error('Database initialization error');
+        process.exit(1);
     });
-
-    Groups.belongsToMany(Users, {
-        through: UserGroups,
-        as: 'users',
-        foreignKey: 'group_id',
-        targetKey: 'id',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
-    });
-
-    console.log('\x1b[32m%s\x1b[0m', 'Database initialization done');
-})();

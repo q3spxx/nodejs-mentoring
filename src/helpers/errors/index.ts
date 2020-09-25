@@ -1,3 +1,9 @@
 export { NotFoundError } from './not-found.error';
-export { getErrorResponseHandler, databaseErrorHandler } from './error.utils';
+export {
+    getErrorResponseHandler,
+    databaseErrorHandler,
+    uncaughtExceptionHandler,
+    unhandledRejectionHandler
+} from './error.utils';
 export { DatabaseError } from './database.error';
+export { InternalServerError } from './internal-server.error';
