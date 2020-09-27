@@ -1,7 +1,7 @@
 import { UsersRepository } from '@repositories';
 import { UsersModel } from '@models';
 import { GroupDataMapper, UserDataMapper } from '@data-access';
-import { NotFoundError } from '@helpers/errors';
+import { BadRequestError, NotFoundError } from '@helpers/errors';
 import { logger } from '@helpers/loggers';
 
 class UsersService {
@@ -21,6 +21,18 @@ class UsersService {
 
         logger.info(`User ${id} has been not found`);
         throw new NotFoundError('User not found');
+    }
+
+    public async getUserByLoginAndPassword(login: string, password: string): Promise<UserDTO> {
+        const user = await this.repository.getUserByLoginAndPassword(login, password);
+
+        if (user) {
+            logger.info(`User ${login} has been found`);
+            return user;
+        }
+
+        logger.info(`User ${login} has been not found`);
+        throw new BadRequestError('username or password is wrong');
     }
 
     public async getAllUsers(): Promise<UserDTO[]> {

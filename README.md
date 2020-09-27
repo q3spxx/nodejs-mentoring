@@ -61,6 +61,16 @@ npm run check-types
 
 ## Api
 
+### Authorization
+
+```
+POST /login - Returns JWT tokens by username and password
+```
+
+```
+POST /refresh-token - Returns JWT tokens by refresh token
+```
+
 ### Users
 
 ```
