@@ -27,6 +27,16 @@ export class UsersRepository {
         return users.map((user) => this.mapper.toDalEntity(user));
     }
 
+    public async getUserByLoginAndPassword(login: string, password: string): Promise<UserDTO | null> {
+        const user = await this.model.findByLoginAndPassword(login, password);
+
+        if (user) {
+            return this.mapper.toDalEntity(user);
+        }
+
+        return user;
+    }
+
     public async createUser(userDTO: UserDTO): Promise<UserDTO> {
         const user = await this.model.create(this.mapper.toDomain(userDTO));
         return this.mapper.toDalEntity(user);

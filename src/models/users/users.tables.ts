@@ -12,7 +12,8 @@ export const createUsersTable = async (queryInterface: QueryInterface): Promise<
         },
         login: {
             allowNull: false,
-            type: DataTypes.TEXT
+            type: DataTypes.TEXT,
+            unique: true
         },
         password: {
             allowNull: false,

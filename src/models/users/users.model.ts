@@ -1,6 +1,6 @@
 import { DataTypes, Model, Op, Transaction } from 'sequelize';
 import { sequelize } from '../sequelize';
-import { DatabaseError, databaseErrorHandler } from '@helpers/errors';
+import { BadRequestError, DatabaseError, databaseErrorHandler } from '@helpers/errors';
 import { Groups } from '../groups/groups.model';
 import { USERS_TABLE_NAME } from './user.constants';
 import { UserGroups } from '../user-groups/user-groups.model';
@@ -16,16 +16,21 @@ export const Users = sequelize.define<Model & UserDomain>(
             defaultValue: DataTypes.UUIDV4
         },
         login: {
-            type: DataTypes.TEXT
+            type: DataTypes.TEXT,
+            unique: true,
+            allowNull: false
         },
         password: {
-            type: DataTypes.TEXT
+            type: DataTypes.TEXT,
+            allowNull: false
         },
         age: {
-            type: DataTypes.INTEGER
+            type: DataTypes.INTEGER,
+            allowNull: false
         },
         is_deleted: {
-            type: DataTypes.BOOLEAN
+            type: DataTypes.BOOLEAN,
+            allowNull: false
         }
     },
     {
@@ -68,9 +73,33 @@ export class UsersModel implements IUsersModel {
         return users;
     }
 
-    public async create(userDomain: UserDomain): Promise<UserDomain> {
-        const user = await Users.create(userDomain, { include: [userGroupsAssociation] }).catch(databaseErrorHandler);
+    public async findByLoginAndPassword(login: string, password: string): Promise<UserDomain | null> {
+        const user = await Users.findOne({
+            limit: 1,
+            where: {
+                login,
+                password
+            },
+            include: [userGroupsAssociation]
+        }).catch(databaseErrorHandler);
         return user;
+    }
+
+    public async create(userDomain: UserDomain): Promise<UserDomain> {
+        return sequelize
+            .transaction(
+                async (transaction: Transaction): Promise<UserDomain> => {
+                    const existingUser = await Users.findOne({ where: { login: userDomain.login }, transaction });
+
+                    if (existingUser) {
+                        throw new BadRequestError(`User with login ${userDomain.login} already exists`);
+                    }
+
+                    const user = await Users.create(userDomain, { transaction, include: [userGroupsAssociation] });
+                    return user;
+                }
+            )
+            .catch(databaseErrorHandler);
     }
 
     public async addGroupToUser(id: string, groupName: string): Promise<UserDomain | null> {

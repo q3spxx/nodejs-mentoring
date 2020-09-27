@@ -7,3 +7,4 @@ export {
 } from './error.utils';
 export { DatabaseError } from './database.error';
 export { InternalServerError } from './internal-server.error';
+export { BadRequestError } from './bad-request.error';
