@@ -1,12 +1,14 @@
 import express from 'express';
-import { NotFoundError } from '@helpers/errors';
+import { InternalServerError } from '@helpers/errors';
+import { logger } from '@helpers/loggers';
 
 const commonController = express.Router();
 
-commonController.all('*', (_, res) => {
-    const notFoundError = new NotFoundError();
+commonController.all('*', (req, res) => {
+    const internalServerError = new InternalServerError();
 
-    res.status(notFoundError.getStatus()).json(notFoundError.getResponse());
+    res.status(internalServerError.getStatus()).json(internalServerError.getResponse());
+    logger.warn(`${req.url} is not exists`);
 });
 
 export { commonController };

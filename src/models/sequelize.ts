@@ -7,5 +7,6 @@ export const sequelize = new Sequelize({
     host: process.env.DB_HOST || 'ec2-54-246-85-151.eu-west-1.compute.amazonaws.com',
     port: Number(process.env.DB_PORT) || 5432,
     database: process.env.DB_DATABASE || 'd3brovi17tke3f',
-    dialectOptions: { ssl: { rejectUnauthorized: false } }
+    dialectOptions: { ssl: { rejectUnauthorized: false } },
+    logging: false
 });
