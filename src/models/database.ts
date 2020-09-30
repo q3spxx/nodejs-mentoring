@@ -1,11 +1,51 @@
-import { Sequelize } from 'sequelize';
+import { sequelize } from './sequelize';
+import { createUsersTable } from './users/users.tables';
+import { createUserGroupsTable } from './user-groups/user-groups.table';
+import { createGroupsTable } from './groups/groups.table';
+import { Users } from './users/users.model';
+import { Groups } from './groups/groups.model';
+import { UserGroups } from './user-groups/user-groups.model';
+import { logger } from '@helpers/loggers';
 
-export const sequelize = new Sequelize({
-    dialect: 'postgres',
-    username: process.env.DB_USERNAME || 'vcqredejflqpfm',
-    password: process.env.DB_PASSWORD || 'ead48f19e28a065920793990d37a6b1b25ab5c8a96a6d2ee0e60238fa0a34abc',
-    host: process.env.DB_HOST || 'ec2-54-246-85-151.eu-west-1.compute.amazonaws.com',
-    port: Number(process.env.DB_PORT) || 5432,
-    database: process.env.DB_DATABASE || 'd3brovi17tke3f',
-    dialectOptions: { ssl: { rejectUnauthorized: false } }
-});
+sequelize
+    .authenticate()
+    .then(
+        () => {
+            logger.info('Database connection done');
+        },
+        (error) => {
+            logger.error('Database connection error', error);
+            process.exit(1);
+        }
+    )
+    .then(async () => {
+        const queryInterface = sequelize.getQueryInterface();
+
+        await createGroupsTable(queryInterface);
+        await createUsersTable(queryInterface);
+        await createUserGroupsTable(queryInterface);
+
+        Users.belongsToMany(Groups, {
+            through: UserGroups,
+            as: 'groups',
+            foreignKey: 'user_id',
+            targetKey: 'id',
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
+
+        Groups.belongsToMany(Users, {
+            through: UserGroups,
+            as: 'users',
+            foreignKey: 'group_id',
+            targetKey: 'id',
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
+
+        logger.info('Database initialization done');
+    })
+    .catch(() => {
+        logger.error('Database initialization error');
+        process.exit(1);
+    });

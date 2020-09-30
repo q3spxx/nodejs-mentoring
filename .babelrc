@@ -8,6 +8,7 @@
                 "root": ["./src"],
                 "alias": {
                     "@services": "./src/services",
+                    "@repositories": "./src/repositories",
                     "@controllers": "./src/controllers",
                     "@models": "./src/models",
                     "@data-access": "./src/data-access",
