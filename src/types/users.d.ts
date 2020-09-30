@@ -30,4 +30,5 @@ declare interface IUsersModel {
     delete(id: string): Promise<number>;
     addGroupToUser(id: string, groupName: string): Promise<UserDomain | null>;
     removeGroupFromUser(id: string, groupName: string): Promise<UserDomain | null>;
+    findByLoginAndPassword(login: string, password: string): Promise<UserDomain | null>;
 }
