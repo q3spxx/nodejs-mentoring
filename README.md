@@ -77,6 +77,11 @@ POST /login - Returns JWT tokens by username and password
 POST /refresh-token - Returns JWT tokens by refresh token
 ```
 
+### Default user
+
+login: `admin`
+password: `qwerty2`
+
 ### Users
 
 ```
