@@ -2,7 +2,7 @@ import { sequelize } from './sequelize';
 import { createUsersTable } from './users/users.tables';
 import { createUserGroupsTable } from './user-groups/user-groups.table';
 import { createGroupsTable } from './groups/groups.table';
-import { Users } from './users/users.model';
+import { createAdminUser, Users } from './users/users.model';
 import { Groups } from './groups/groups.model';
 import { UserGroups } from './user-groups/user-groups.model';
 import { logger } from '@helpers/loggers';
@@ -43,6 +43,7 @@ sequelize
             onUpdate: 'CASCADE'
         });
 
+        await createAdminUser();
         logger.info('Database initialization done');
     })
     .catch(() => {

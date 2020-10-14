@@ -1,0 +1,21 @@
+version: '3'
+services:
+    db:
+        image: postgres:11-alpine
+        environment:
+            POSTGRES_DB: node-app-db
+            POSTGRES_PASSWORD: qwerty
+            POSTGRES_USER: admin
+        ports:
+            - '5432:5432'
+    app:
+        image: node-app:14
+        depends_on:
+            - db
+        environment:
+            DB_USERNAME: admin
+            DB_PASSWORD: qwerty
+            DB_HOST: db
+            DB_DATABASE: node-app-db
+        ports:
+            - '4000:4000'

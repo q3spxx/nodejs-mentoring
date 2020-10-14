@@ -217,3 +217,17 @@ export class UsersModel implements IUsersModel {
         return users;
     }
 }
+
+export const createAdminUser = async (): Promise<void> => {
+    await Users.findOrCreate({
+        where: {
+            login: 'admin'
+        },
+        defaults: {
+            login: 'admin',
+            password: 'qwerty2',
+            is_deleted: false,
+            age: 30
+        }
+    });
+};

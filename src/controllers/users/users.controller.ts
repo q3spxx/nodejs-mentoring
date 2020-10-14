@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import {
     userGetValidator,
     userByIdValidator,
@@ -19,75 +19,95 @@ import { ValidatedRequest } from 'express-joi-validation';
 import { usersService } from '@services';
 import { getErrorResponseHandler } from '@helpers/errors';
 
+export const getUsersMiddleware = ({ query }: Request, res: Response, next: NextFunction): void => {
+    if (Object.entries(query).length) {
+        next();
+
+        return;
+    }
+
+    usersService
+        .getAllUsers()
+        .then((data) => res.json(data))
+        .catch(getErrorResponseHandler(res));
+};
+
+export const getUserByIdMiddleware = ({ params: { id } }: ValidatedRequest<UserByIdSchema>, res: Response): void => {
+    usersService
+        .getUser(id)
+        .then((data) => res.json(data))
+        .catch(getErrorResponseHandler(res));
+};
+
+export const createUserMiddleware = ({ body }: ValidatedRequest<UserPostSchema>, res: Response): void => {
+    usersService
+        .createUser(body)
+        .then((data) => res.json(data))
+        .catch(getErrorResponseHandler(res));
+};
+
+export const updateUserMiddleware = (
+    { params: { id }, body }: ValidatedRequest<UserPutByIdSchema>,
+    res: Response
+): void => {
+    usersService
+        .updateUser({ id, ...body })
+        .then((data) => res.json(data))
+        .catch(getErrorResponseHandler(res));
+};
+
+export const deleteUserMiddleware = (
+    { query: { force, groupName }, params: { id } }: ValidatedRequest<UserDeleteByIdSchema>,
+    res: Response
+): void => {
+    if (groupName) {
+        usersService
+            .removeGroupFromUser(id, groupName)
+            .then((data) => res.json(data))
+            .catch(getErrorResponseHandler(res));
+        return;
+    }
+
+    usersService
+        .deleteUser(id, force)
+        .then((data) => res.json(data))
+        .catch(getErrorResponseHandler(res));
+};
+
+export const addUserGroupMiddleware = (
+    { params: { id }, query: { groupName } }: ValidatedRequest<UserPostByIdSchema>,
+    res: Response
+): void => {
+    usersService
+        .addGroupToUser(id, groupName)
+        .then((data) => res.json(data))
+        .catch(getErrorResponseHandler(res));
+};
+
+export const getUserByLoginSubstringMiddleware = (
+    { query: { loginSubstring, limit } }: ValidatedRequest<UsersGetSchema>,
+    res: Response
+): void => {
+    usersService
+        .getAutoSuggestUsers(loginSubstring, limit)
+        .then((data) => res.json(data))
+        .catch(getErrorResponseHandler(res));
+};
+
 const userController = express.Router();
 
 userController
     .route('/users')
-    .get(({ query }, res, next): void => {
-        if (Object.entries(query).length) {
-            next();
-
-            return;
-        }
-
-        usersService
-            .getAllUsers()
-            .then((data) => res.json(data))
-            .catch(getErrorResponseHandler(res));
-    })
-    .get(userGetValidator, ({ query: { loginSubstring, limit } }: ValidatedRequest<UsersGetSchema>, res): void => {
-        usersService
-            .getAutoSuggestUsers(loginSubstring, limit)
-            .then((data) => res.json(data))
-            .catch(getErrorResponseHandler(res));
-    })
-    .post(userPostValidator, ({ body }: ValidatedRequest<UserPostSchema>, res): void => {
-        usersService
-            .createUser(body)
-            .then((data) => res.json(data))
-            .catch(getErrorResponseHandler(res));
-    });
+    .get(getUsersMiddleware)
+    .get(userGetValidator, getUserByLoginSubstringMiddleware)
+    .post(userPostValidator, createUserMiddleware);
 
 userController
     .route('/users/:id')
     .all(userByIdValidator)
-    .get(({ params: { id } }: ValidatedRequest<UserByIdSchema>, res): void => {
-        usersService
-            .getUser(id)
-            .then((data) => res.json(data))
-            .catch(getErrorResponseHandler(res));
-    })
-    .post(
-        userPostByIdValidator,
-        ({ params: { id }, query: { groupName } }: ValidatedRequest<UserPostByIdSchema>, res) => {
-            usersService
-                .addGroupToUser(id, groupName)
-                .then((data) => res.json(data))
-                .catch(getErrorResponseHandler(res));
-        }
-    )
-    .put(userPutByIdValidator, ({ params: { id }, body }: ValidatedRequest<UserPutByIdSchema>, res): void => {
-        usersService
-            .updateUser({ id, ...body })
-            .then((data) => res.json(data))
-            .catch(getErrorResponseHandler(res));
-    })
-    .delete(
-        userDeleteByIdValidator,
-        ({ query: { force, groupName }, params: { id } }: ValidatedRequest<UserDeleteByIdSchema>, res): void => {
-            if (groupName) {
-                usersService
-                    .removeGroupFromUser(id, groupName)
-                    .then((data) => res.json(data))
-                    .catch(getErrorResponseHandler(res));
-                return;
-            }
-
-            usersService
-                .deleteUser(id, force)
-                .then((data) => res.json(data))
-                .catch(getErrorResponseHandler(res));
-        }
-    );
+    .get(getUserByIdMiddleware)
+    .post(userPostByIdValidator, addUserGroupMiddleware)
+    .put(userPutByIdValidator, createUserMiddleware)
+    .delete(userDeleteByIdValidator, deleteUserMiddleware);
 
 export { userController };

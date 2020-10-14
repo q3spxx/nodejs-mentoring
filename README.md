@@ -59,6 +59,12 @@ npm run lint:fix
 npm run check-types
 ```
 
+### Testing
+
+```
+npm run test
+```
+
 ## Api
 
 ### Authorization
@@ -129,4 +135,18 @@ PUT /groups/:id - Updates all groups by id
 
 ```
 DELETE /groups/:id - Delete all groups by id
+```
+
+## Docker
+
+### Create image
+
+```
+docker build -t node-app:14 .
+```
+
+### Run with local postgres
+
+```
+docker-compose up
 ```
