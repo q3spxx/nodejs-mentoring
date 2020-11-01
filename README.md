@@ -59,6 +59,12 @@ npm run lint:fix
 npm run check-types
 ```
 
+### Testing
+
+```
+npm run test
+```
+
 ## Api
 
 ### Authorization
@@ -70,6 +76,11 @@ POST /login - Returns JWT tokens by username and password
 ```
 POST /refresh-token - Returns JWT tokens by refresh token
 ```
+
+### Default user
+
+login: `admin`
+password: `qwerty2`
 
 ### Users
 
@@ -129,4 +140,18 @@ PUT /groups/:id - Updates all groups by id
 
 ```
 DELETE /groups/:id - Delete all groups by id
+```
+
+## Docker
+
+### Create image
+
+```
+docker build -t node-app:14 .
+```
+
+### Run with local postgres
+
+```
+docker-compose up
 ```
