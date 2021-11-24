@@ -1,7 +1,7 @@
 import express, { Response } from 'express';
-import { userController, commonController, groupsController, authController } from '@controllers';
-import { logger, loggerMiddelware } from '@helpers/loggers';
-import { uncaughtExceptionHandler, unhandledRejectionHandler } from '@helpers/errors';
+// import { userController, commonController, groupsController, authController } from '@controllers';
+// import { logger, loggerMiddelware } from '@helpers/loggers';
+// import { uncaughtExceptionHandler, unhandledRejectionHandler } from '@helpers/errors';
 // import { authorizeMiddelware } from '@helpers/auth';
 import cors from 'cors';
 
@@ -9,8 +9,8 @@ const port = process.env.PORT || 4000;
 
 const app = express();
 
-process.on('uncaughtException', uncaughtExceptionHandler);
-process.on('unhandledRejection', unhandledRejectionHandler);
+// process.on('uncaughtException', uncaughtExceptionHandler);
+// process.on('unhandledRejection', unhandledRejectionHandler);
 
 app.listen(port);
 
@@ -74,15 +74,6 @@ ssoAuthResultController.route('/sso/auth-result').get((req, res: Response): void
 });
 
 // app.use(loggerMiddelware, authController, authorizeMiddelware, userController, groupsController, commonController);
-app.use(
-    loggerMiddelware,
-    ssoAuthController,
-    ssoAuthResultController,
-    ssoController,
-    authController,
-    userController,
-    groupsController,
-    commonController
-);
+app.use(ssoAuthController, ssoAuthResultController, ssoController);
 
-logger.info(`The server is running on port ${port}`);
+console.log(`The server is running on port ${port}`);
