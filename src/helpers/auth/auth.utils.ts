@@ -4,7 +4,7 @@ import jwt, { VerifyErrors } from 'jsonwebtoken';
 const secret = 'q3spxx';
 
 export const authorizeMiddelware = (req: Request, res: Response, next: NextFunction): void => {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization?.replace('Bearer ', '');
 
     if (token) {
         jwt.verify(token, secret, (error: VerifyErrors) => {
