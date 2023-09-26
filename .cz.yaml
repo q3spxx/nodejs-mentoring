@@ -1,0 +1,15 @@
+---
+commitizen:
+  bump_message: "bump(release): version $current_version \u2192 $new_version"
+  github_base_url: https://git.epam.com
+  github_repo: q3spxx/nodejs-mentoring
+  jira_base_url: https://jira.epam.com/jira
+  jira_prefix: EPMDHMTWO-
+  name: cz_github_jira_conventional
+  tag_format: $major.$minor.$patch
+  update_changelog_on_bump: true
+  version: 1.0.0
+  version_files:
+    - package.json
+  version_provider: commitizen
+  version_scheme: semver
