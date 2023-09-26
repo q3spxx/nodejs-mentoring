@@ -8,8 +8,8 @@ commitizen:
   name: cz_github_jira_conventional
   tag_format: $major.$minor.$patch
   update_changelog_on_bump: true
-  version: 1.0.0
+  version: 1.0.1
   version_files:
-    - package.json
+  - package.json
   version_provider: commitizen
   version_scheme: semver
