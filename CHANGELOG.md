@@ -6,10 +6,12 @@ See [conventional-commits](https://www.conventionalcommits.org/) for commit guid
 
 See [commitizen-tools](https://commitizen-tools.github.io/commitizen/) for release management setup.
 
-## 1.0.1 (2023-09-26)
+## 1.0,1
+
+## 1.0.2 (2023-09-27)
 
 ### Fix
 
 - **[EPMDHMTWO-1234](https://jira.epam.com/jira/browse/EPMDHMTWO-1234)**: something [62c24](https://git.epam.com/q3spxx/nodejs-mentoring/commit/62c2471c4e5a5be832fd98a8c43f3bad14033317)
 
-## 1.0.0
+## 1.0.0 (2020-11-01)
